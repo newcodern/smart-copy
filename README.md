@@ -1,122 +1,102 @@
-## 🛠 How to Use Smart Copy (Step-by-Step Guide)
+## 🧠 Understanding How Smart Copy Works
 
-### 🖥 1. Launch the Application
-
-* Open `smart_copy_0.9.1.exe`.
-* No installation is needed. The app runs as a portable standalone executable.
+Smart Copy is **not just a file copier**. It’s a **safe folder syncing tool** with built-in **backup and restore** logic.
 
 ---
 
-### 📁 2. Select Source & Destination Folders
+## 📁 Folder Definitions
 
-* **Source Folder**: the folder you want to copy files **from**.
-* **Destination Folder**: the folder where files will be copied **to**.
-
-🧲 You can:
-
-* Click the **"Browse"** button to choose folders.
-* OR drag and drop folders into the input fields.
+| Field                  | Meaning & Purpose                                                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Source Folder**      | The folder **you want to copy from**. It contains the files you want to move or update.                                  |
+| **Destination Folder** | The folder **you want to paste into**. It's the target location (e.g., USB drive, external HDD, project directory, etc.) |
+| **Restore Point**      | A backup session saved from a previous Smart Copy. You can use it to undo changes.                                       |
 
 ---
 
-### 🔁 3. Smart Copy (Main Feature)
+## 🔁 Smart Copy Logic (Behind the Scenes)
 
-Click **🔁 Smart Copy** to begin copying.
+1. **You choose the source and destination folders.**
 
-#### What Happens:
+2. **App walks through the source folder** and checks each file:
 
-1. New files in source → copied to destination ✅
-2. If a file with the same name exists in destination:
+   * If the file **does not exist** in destination → it gets **added** ✅
+   * If the file **already exists** in destination:
 
-   * You’ll be **asked** if you want to overwrite it.
-   * If yes:
+     * You are asked: "Do you want to overwrite?"
+     * If you choose **Yes**:
 
-     * The existing file is **backed up** first.
-     * Then it's replaced with the new one.
-   * If no:
+       * The destination file is **backed up** first.
+       * Then it is **replaced** by the source file.
+     * If you choose **No**:
 
-     * It will be skipped.
+       * The file is **skipped**.
 
-🗂 Backup is created in `backup_restore/` folder with a **timestamp**.
+3. The app logs everything:
 
-🧾 All added and overwritten files are logged.
+   * \[ + ] = New file added
+   * \[ # ] = File overwritten (but backup saved)
+   * \[ ! ] = File skipped (you chose not to overwrite)
+   * \[ ERROR ] = Something went wrong
 
-* Overwritten files → stored in `overwritten/`
-* Newly added files → listed in `added.log`
-
----
-
-### ♻️ 4. Restore From Backup
-
-#### Why use Restore?
-
-If something went wrong after Smart Copy, you can undo everything.
-
-#### How to restore:
-
-1. Select the same **Destination Folder** you used earlier.
-2. Choose a **Restore Point** from the dropdown (based on timestamp).
-3. Click **♻️ Restore**.
-
-#### What Happens:
-
-* Files from `overwritten/` are restored.
-* Files listed in `added.log` are deleted.
-
-✅ All changes are rolled back.
+4. The progress bar tracks how many files have been processed.
 
 ---
 
-### 📖 5. Log Viewer
+## 💾 What Happens to Overwritten or New Files?
 
-* All activities (copy, skip, error, restore) are displayed in the bottom log window.
-* Click 🧹 **Clear Log** to reset the log view.
-
----
-
-## 💡 Real-World Scenarios
-
-### 📌 Scenario 1: Updating a USB Drive Safely
-
-* You want to update your USB backup folder without losing important files.
-* Use Smart Copy to sync your latest work folder to the USB drive.
-* If any file on USB already exists, Smart Copy will ask before replacing it — and will back it up first!
-
----
-
-### 📌 Scenario 2: Backup and Restore While Working With Projects
-
-* You maintain a large project and frequently update assets.
-* Before copying updated files, Smart Copy creates a backup of what's about to be replaced.
-* If your update breaks something, just use the Restore function to get the old files back!
-
----
-
-### 📌 Scenario 3: Avoiding Accidental Data Loss
-
-* You're syncing folders between drives (e.g. HDD → SSD).
-* If you accidentally overwrite something, you can recover it from the restore point without needing a separate backup system.
-
----
-
-## 📦 Where Are Backups Stored?
-
-Backups are stored in the app's directory inside the folder:
+All changes are stored in a backup folder under `backup_restore/`:
 
 ```
 backup_restore/
-  └── 17 July 2025 20-30-12/         <-- Timestamped session
-        ├── overwritten/             <-- Original files that got replaced
-        └── added.log                <-- List of files added to destination
+└── 19 July 2025 18-24-09/        <-- Timestamp
+     ├── overwritten/            <-- Original versions of files you chose to overwrite
+     └── added.log               <-- List of newly added files in destination
 ```
 
-You can delete old backup folders manually if you don’t need them anymore.
+You can restore from this session later using the **Restore** button.
 
 ---
 
-## 🚫 Things to Keep in Mind
+## ♻️ Restore Flow (Undo Copy Session)
 
-* Make sure you have **read permission** on the source and **write permission** on the destination.
-* This tool does **not merge files** — it copies them exactly as they are.
-* Do not rename or modify files inside `backup_restore/` unless you know what you're doing.
-* The app checks for tampering — if the watermark is changed or removed, it will automatically close.
+1. You select the same **Destination Folder**.
+2. Pick a **Restore Point** from the dropdown.
+3. Click **Restore**.
+
+Then Smart Copy:
+
+* Restores any files in `overwritten/` to their original path.
+* Deletes any files listed in `added.log`.
+
+It will **revert the destination folder back** to how it was before you ran Smart Copy that time.
+
+---
+
+## 🎯 Example Use Case (Simple Scenario)
+
+> You want to sync your "Projects" folder to your external hard drive (E:\Backup)
+
+1. **Source Folder**: `C:\Users\You\Documents\Projects`
+2. **Destination Folder**: `E:\Backup`
+3. Click 🔁 **Smart Copy**
+
+   * It will:
+
+     * Copy all new files from `Projects` to `E:\Backup`
+     * Ask before overwriting anything
+     * Save backups of overwritten files
+4. If later you regret copying, or something breaks:
+
+   * Choose the same `E:\Backup`
+   * Select the correct restore point
+   * Click ♻️ **Restore**
+   * Done, everything is rolled back!
+
+---
+
+## ⚠️ Best Practices
+
+* **Do not use this tool to move files between folders with live system data** (e.g., system32, program files).
+* Always review which folders you are working with.
+* After a copy session, you can keep or delete the backup folder (`backup_restore`) if you no longer need it.
