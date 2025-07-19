@@ -52,15 +52,3 @@ Backups are stored in a folder named `backup_restore/` in the same directory as 
 - `overwritten/` — stores original files before they were overwritten.
 - `added.log` — tracks new files that were added during the copy process.
 
----
-
-## Notes
-
-- The app includes a built-in watermark and protection check. Tampering will close the app.
-- Designed for Windows only (tested on Windows 10/11).
-- Works as a portable executable (`.exe`), no installation needed.
-
----
-
-## License
-Made for personal or internal use.
